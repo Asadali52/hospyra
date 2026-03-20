@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import BackgroundImg from '@/public/assets/pngs/why-join-hospyra-bg.png'
+import { useJoinHospyraModal } from '@/contexts/JoinHospyraModalContext'
 
 const tabs = ['Business', 'Vendors', 'Partners', 'Ambassador'] as const
 
@@ -43,6 +43,7 @@ const cardsByTab: Record<Tab, { image: string; text: string }[]> = {
 
 const WhyJoinHospyra = () => {
   const [activeTab, setActiveTab] = useState<Tab>('Business')
+  const { openModal } = useJoinHospyraModal()
   const cards = cardsByTab[activeTab]
 
   return (
@@ -106,12 +107,13 @@ const WhyJoinHospyra = () => {
           <p className="text-lg md:text-xl font-effra mb-6">
             Start Transforming Your Business Today
           </p>
-          <Link
-            href="/partner"
+          <button
+            type="button"
+            onClick={() => openModal()}
             className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-[#1E50C1] text-white font-medium font-effra hover:bg-[#1a45a8] transition-colors"
           >
             👉 Join Now Pay $0 Signup Fee (Limited Time $499 Value)
-          </Link>
+          </button>
         </div>
       </div>
     </div>

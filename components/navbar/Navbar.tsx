@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { ChevronDown, Menu, X } from 'lucide-react'
+import { useJoinHospyraModal } from '@/contexts/JoinHospyraModalContext'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,8 +36,14 @@ const navLinks = [
 
 const Navbar = () => {
   const pathname = usePathname()
+  const { openModal } = useJoinHospyraModal()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isServicesOpen, setIsServicesOpen] = useState(false)
+
+  const handleJoinClick = (_e: React.FormEvent) => {
+    openModal()
+    setIsSidebarOpen(false)
+  }
 
   const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href)
 
@@ -129,7 +136,7 @@ const Navbar = () => {
           </div>
 
           <div className="max-[1200px]:hidden flex">
-            <GlobalButton title='Join Hosperra' font='500' className='px-6 font-effra' borderRadius='8px' height='45px' bgColor='#1E50C1' color='white' />
+            <GlobalButton title='Join Hosperra' font='500' className='px-6 font-effra' borderRadius='8px' height='45px' bgColor='#1E50C1' color='white' onClick={handleJoinClick} />
           </div>
 
           <button
@@ -211,7 +218,7 @@ const Navbar = () => {
           </nav>
 
           <div className="p-6 border-t">
-            <GlobalButton title='Join Hosperra' font='500' className='px-6 font-effra' borderRadius='8px' height='45px' bgColor='#1E50C1' color='white' />
+            <GlobalButton title='Join Hosperra' font='500' className='px-6 font-effra' borderRadius='8px' height='45px' bgColor='#1E50C1' color='white' onClick={handleJoinClick} />
           </div>
         </div>
       </aside>

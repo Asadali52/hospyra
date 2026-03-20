@@ -3,6 +3,8 @@ import { Antonio } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
+import { ApolloProvider } from "@/providers/ApolloProvider";
+import { JoinHospyraModalProvider } from "@/contexts/JoinHospyraModalContext";
 
 const antonio = Antonio({
   variable: "--font-antonio",
@@ -36,9 +38,13 @@ export default function RootLayout({
       <body
         className={`${antonio.variable} font-effra antialiased`}
       >
-        <Navbar />
-        {children}
-        <Footer />
+        <ApolloProvider>
+          <JoinHospyraModalProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </JoinHospyraModalProvider>
+        </ApolloProvider>
       </body>
     </html>
   );
