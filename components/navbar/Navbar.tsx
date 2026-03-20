@@ -89,7 +89,7 @@ const Navbar = () => {
                   : 'text-[#27272A] hover:text-[#FF6B35]'
                   }`}
               >
-                Services <ChevronDown className="h-4 w-4" />
+                Services <ChevronDown className="h-4.5 w-4.5 text-[#1E50C1] mt-1" />
               </DropdownMenuTrigger>
 
               <DropdownMenuContent className="bg-white border border-gray-200 min-w-50 mt-2 shadow-lg">
