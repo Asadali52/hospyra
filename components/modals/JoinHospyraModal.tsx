@@ -115,6 +115,17 @@ const STEPS = [
   },
 ] as const;
 
+const HIDDEN_INVITE_CODE = 'KAR001';
+
+function isInviteCodeField(field: FormField): boolean {
+  const searchText = `${(field.label || '').toLowerCase()} ${(field.name || '').toLowerCase()}`;
+  return (
+    searchText.includes('invite') ||
+    searchText.includes('referral') ||
+    (searchText.includes('code') && (searchText.includes('invite') || searchText.includes('referral')))
+  );
+}
+
 function assignFieldToStep(field: FormField): number {
   const searchText = `${(field.label || '').toLowerCase()} ${(field.name || '').toLowerCase()}`;
 
@@ -185,6 +196,7 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
   const [fieldsByStep, setFieldsByStep] = useState<Record<number, FormField[]>>({});
   const [currentStep, setCurrentStep] = useState(1);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
@@ -194,6 +206,7 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
       setFieldsByStep({});
       setCurrentStep(1);
       setSubmitError(null);
+      setFieldErrors({});
       setShowSuccess(false);
       return;
     }
@@ -214,6 +227,7 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
 
         const byStep: Record<number, FormField[]> = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
         normalizedFields.forEach((field) => {
+          if (isInviteCodeField(field)) return;
           const step = assignFieldToStep(field);
           if (!byStep[step]) byStep[step] = [];
           byStep[step].push(field);
@@ -223,6 +237,10 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
 
         const initialData: FormDataRecord = {};
         normalizedFields.forEach((field: FormField) => {
+          if (isInviteCodeField(field)) {
+            initialData[field.id] = HIDDEN_INVITE_CODE;
+            return;
+          }
           initialData[field.id] = field.value || '';
           if (initialValues) {
             const fieldName = field.name || field.label || '';
@@ -239,11 +257,6 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
               initialValues.phone
             ) {
               initialData[field.id] = initialValues.phone;
-            } else if (
-              mapped.some((n) => ['inviteCode', 'referralCode', 'referral_code'].includes(n)) &&
-              initialValues.referralCode
-            ) {
-              initialData[field.id] = initialValues.referralCode;
             }
           }
         });
@@ -255,6 +268,11 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
   const handleInputChange = (fieldId: string, value: FieldValue) => {
     setFormData((prev) => ({ ...prev, [fieldId]: value }));
     setSubmitError(null);
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      delete next[fieldId];
+      return next;
+    });
   };
 
   const handleMultiSelectChange = (fieldId: string, optionValue: string, checked: boolean) => {
@@ -266,17 +284,34 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
       ? [...arr, optionValue]
       : arr.filter((v) => v !== optionValue);
     setFormData((prev) => ({ ...prev, [fieldId]: next.join(',') }));
+    setFieldErrors((prev) => {
+      const copy = { ...prev };
+      delete copy[fieldId];
+      return copy;
+    });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!isLastStep) return;
     setSubmitError(null);
+
+    const errors: Record<string, string> = {};
+    currentFields.forEach((field) => {
+      const err = getFieldError(field);
+      if (err) errors[field.id] = err;
+    });
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
 
     if (!formHandlers?.length) return;
 
     try {
       const formHandler = formHandlers[0];
       const submitData: FormDataRecord = { ...formData };
+      parsedFields.forEach((f) => {
+        if (isInviteCodeField(f)) submitData[f.id] = HIDDEN_INVITE_CODE;
+      });
       await submitAndProcessForm({
         formId: formHandler.id,
         brandId: formHandler.brand_id || 1,
@@ -301,7 +336,35 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
   const isLastStep = currentStep >= lastStepWithFields || currentStep === 6;
   const isFirstStep = currentStep <= 1;
 
+  const getFieldError = (field: FormField): string | null => {
+    if (!field.required) return null;
+    const val = formData[field.id];
+    if (val === undefined || val === null) return `${field.label || 'This field'} is required`;
+    const str = typeof val === 'string' ? val.trim() : String(val);
+    if (str === '' || str === 'false') return `${field.label || 'This field'} is required`;
+    if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str)) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  };
+
   const goNext = () => {
+    const errors: Record<string, string> = {};
+    let hasError = false;
+    currentFields.forEach((field) => {
+      const err = getFieldError(field);
+      if (err) {
+        errors[field.id] = err;
+        hasError = true;
+      }
+    });
+    setFieldErrors(errors);
+    if (hasError) {
+      setSubmitError(null);
+      return;
+    }
+    setFieldErrors({});
+    setSubmitError(null);
     for (let s = currentStep + 1; s <= 6; s++) {
       if ((fieldsByStep[s]?.length ?? 0) > 0) {
         setCurrentStep(s);
@@ -343,8 +406,10 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
       ? fieldValue.split(',').map((s) => s.trim()).filter(Boolean)
       : [];
 
-    const inputClass =
-      'w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#1E50C1] focus:border-transparent';
+    const fieldError = fieldErrors[fieldId];
+    const inputClass = `w-full px-3 py-2 border rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#1E50C1] focus:border-transparent ${
+      fieldError ? 'border-red-500' : 'border-gray-300'
+    }`;
     const labelClass = 'block text-sm font-medium text-gray-700 mb-1 font-effra';
 
     if (isMultiSelect || (field.label?.toLowerCase().includes('service') && field.options?.length)) {
@@ -371,6 +436,9 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
               );
             })}
           </div>
+          {fieldError && (
+            <p className="mt-1 text-xs text-red-600 font-effra">{fieldError}</p>
+          )}
         </div>
       );
     }
@@ -394,6 +462,9 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
               required={field.required}
               className={inputClass}
             />
+            {fieldError && (
+              <p className="mt-1 text-xs text-red-600 font-effra">{fieldError}</p>
+            )}
           </div>
         );
 
@@ -411,6 +482,9 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
               rows={4}
               className={inputClass}
             />
+            {fieldError && (
+              <p className="mt-1 text-xs text-red-600 font-effra">{fieldError}</p>
+            )}
           </div>
         );
 
@@ -438,6 +512,9 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
                 );
               })}
             </select>
+            {fieldError && (
+              <p className="mt-1 text-xs text-red-600 font-effra">{fieldError}</p>
+            )}
           </div>
         );
 
@@ -455,6 +532,9 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
                 {fieldLabel} {field.required && <span className="text-red-500">*</span>}
               </span>
             </label>
+            {fieldError && (
+              <p className="mt-1 text-xs text-red-600 font-effra">{fieldError}</p>
+            )}
           </div>
         );
 
@@ -483,6 +563,9 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
                 );
               })}
             </div>
+            {fieldError && (
+              <p className="mt-1 text-xs text-red-600 font-effra">{fieldError}</p>
+            )}
           </div>
         );
 
@@ -500,6 +583,9 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
               required={field.required}
               className={inputClass}
             />
+            {fieldError && (
+              <p className="mt-1 text-xs text-red-600 font-effra">{fieldError}</p>
+            )}
           </div>
         );
     }
@@ -570,7 +656,13 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
         )}
 
         {!isLoading && !error && parsedFields.length > 0 && (
-          <form onSubmit={handleSubmit} className="space-y-2">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (isLastStep) handleSubmit(e);
+            }}
+            className="space-y-2"
+          >
             {currentFields.length > 0 ? (
               <>
                 <div className="mb-2">
@@ -610,7 +702,8 @@ export const JoinHospyraModal: React.FC<JoinHospyraModalProps> = ({
                     </button>
                   ) : (
                     <button
-                      type="submit"
+                      type="button"
+                      onClick={() => handleSubmit()}
                       disabled={isSubmitting}
                       className={`flex-1 py-3 px-4 rounded-lg font-medium font-effra transition-colors ${
                         isSubmitting
