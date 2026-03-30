@@ -6,7 +6,7 @@ import RightImg from "@/public/assets/pngs/banner-images/home-banner-img.png";
 const HomeBanner = () => {
   return (
     <div className='grid grid-cols-2 max-[1000px]:grid-cols-1 py-16 max-[1000px]:py-10 px-[4%] max-[1200px]:gap-6 bg-linear-to-b from-[#F8F7F7] to-[#FFF7F5]'>
-      <div className='my-auto space-y-3'>
+      <div className='my-auto space-y-3 max-[1000px]:order-1'>
         <p>Designed by operators, for operators.</p>
         <p className='text-[46px] max-[1200px]:text-[36px] max-[640px]:text-[28px] font-semibold leading-16 max-[1200px]:leading-12 max-[640px]:leading-10'>Complete System Designed To Run Your Entire Business Through One Platform</p>
         <p className='text-lg'>Hosperra combines expertise, a strong supplier network, and technology with dedicated support. We improve your product, elevate customer experience, increase revenue, and reduce costs while keeping operations structured.</p>
