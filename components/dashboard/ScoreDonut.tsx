@@ -13,7 +13,7 @@ export function ScoreDonut({ score, max = 100 }: ScoreDonutProps) {
 
   return (
     <div
-      className="relative mx-auto flex aspect-square w-44 max-w-full items-center justify-center sm:w-52"
+      className="relative mx-auto flex aspect-square w-44 max-w-full items-center justify-center sm:w-48"
       role="img"
       aria-label={`Overall score ${score} out of ${max}`}
     >

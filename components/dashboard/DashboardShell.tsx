@@ -29,7 +29,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         mobileOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'
       )}
     >
-      <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-5">
+      <div className="flex h-16 shrink-0 items-center justify-between px-5">
         <Link
           href="/"
           className="flex items-center gap-2 outline-0"
@@ -77,7 +77,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         })}
       </nav>
 
-      <div className="shrink-0 border-t border-white/10 p-3">
+      <div className="shrink-0 border-t border-white/10 px-3 py-1">
         <Link
           href="/"
           onClick={closeMobile}
@@ -106,7 +106,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col lg:ml-64 rounded-tl-4xl">
 
         <div className="sticky top-0 z-30 pt-2 bg-black">
-          <header className="flex h-14 rounded-tl-[40px] items-center justify-between gap-3 bg-white/95 px-4 backdrop-blur md:h-16 md:px-6">
+          <header className="flex h-16 rounded-tl-[40px] items-center justify-between gap-3 bg-white px-4 md:h-18 md:px-6">
             <div className="flex min-w-0 items-center gap-2">
               <button
                 type="button"
@@ -136,7 +136,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <main className="flex-1 overflow-auto bg-white px-4 md:px-6">
-          <p className="pt-4 text-sm text-[#52525b] font-effra md:text-base">
+          <p className="text-sm text-[#52525b] font-effra md:text-base">
             {welcomeLine}
           </p>
           <div className="py-4">{children}</div>

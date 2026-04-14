@@ -1,84 +1,58 @@
-import Link from 'next/link';
-import { ArrowRight, FileText, Users } from 'lucide-react';
+import GlobalButton from "@/components/buttons/GlobalButton";
+import KeyMatricsCard from "@/components/dashboard/KeyMatricsCard";
+import LineScore from "@/components/dashboard/LineScore";
+import { ScoreDonut } from "@/components/dashboard/ScoreDonut";
+import { keyMetricsData } from "@/components/dashboard/StaticData";
+import WhatsHappeningNow from "@/components/dashboard/WhatsHappeningNow";
+import { FileText, MessageSquare, Package } from 'lucide-react'
 
-export default function DashboardPage() {
+
+const DashboardPage = () => {
   return (
-    <div className="mx-auto max-w-6xl space-y-8">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-[#FF6B35] font-effra">
-          Overview
-        </p>
-        <h2 className="mt-1 text-2xl font-bold text-[#27272A] font-effra md:text-3xl">
-          Welcome back
-        </h2>
-        <p className="mt-2 max-w-2xl text-sm text-[#52525b] font-effra md:text-base">
-          This is your dashboard shell—add charts, tables, and partner tools here as you connect
-          data.
-        </p>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {[
-          { label: 'Active partners', value: '—', hint: 'Connect your data source' },
-          { label: 'Open tasks', value: '—', hint: 'No tasks yet' },
-          { label: 'Last updated', value: 'Today', hint: 'Local preview' },
-          { label: 'Active partners', value: '—', hint: 'Connect your data source' },
-          { label: 'Open tasks', value: '—', hint: 'No tasks yet' },
-          { label: 'Last updated', value: 'Today', hint: 'Local preview' },
-          { label: 'Active partners', value: '—', hint: 'Connect your data source' },
-          { label: 'Open tasks', value: '—', hint: 'No tasks yet' },
-          { label: 'Last updated', value: 'Today', hint: 'Local preview' },
-        ].map((card, i) => (
-          <div
-            key={i}
-            className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm ring-1 ring-black/4"
-          >
-            <p className="text-sm font-medium text-[#52525b] font-effra">{card.label}</p>
-            <p className="mt-2 text-3xl font-bold text-[#27272A] font-effra">{card.value}</p>
-            <p className="mt-2 text-xs text-[#71717a] font-effra">{card.hint}</p>
-          </div>
-        ))}
-      </div>
-
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm ring-1 ring-black/4">
-          <div className="flex items-center gap-2 text-[#27272A] font-effra">
-            <Users className="h-5 w-5 text-[#1E50C1]" aria-hidden />
-            <h3 className="text-lg font-semibold">Quick actions</h3>
-          </div>
-          <ul className="mt-4 space-y-2">
-            <li>
-              <Link
-                href="/register"
-                className="flex items-center justify-between rounded-xl border border-gray-100 px-4 py-3 text-sm font-medium text-[#27272A] font-effra transition-colors hover:border-[#1E50C1]/30 hover:bg-[#1E50C1]/5"
-              >
-                Supply partner registration
-                <ArrowRight className="h-4 w-4 text-[#1E50C1]" aria-hidden />
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/contact"
-                className="flex items-center justify-between rounded-xl border border-gray-100 px-4 py-3 text-sm font-medium text-[#27272A] font-effra transition-colors hover:border-[#1E50C1]/30 hover:bg-[#1E50C1]/5"
-              >
-                Contact Hospyra
-                <ArrowRight className="h-4 w-4 text-[#1E50C1]" aria-hidden />
-              </Link>
-            </li>
-          </ul>
+    <div className="grid gap-5 grid-cols-3 max-[1350px]:grid-cols-1">
+      <div className="border border-[#FFDAD0] rounded-2xl p-4 bg-[#FFDAD0]/20">
+        <p className="text-xl font-medium font-effra text-center">Business Performance Score</p>
+        <ScoreDonut score={78} />
+        <div className="bg-[#1F2022] rounded-full mx-auto w-fit px-6 py-3 flex items-center gap-2">
+          <div className="bg-[#FF4945] h-3 w-3 rounded-full" />
+          <p className="text-white text-xs">Good Needs Optimization</p>
         </div>
-
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm ring-1 ring-black/4">
-          <div className="flex items-center gap-2 text-[#27272A] font-effra">
-            <FileText className="h-5 w-5 text-[#1E50C1]" aria-hidden />
-            <h3 className="text-lg font-semibold">Recent activity</h3>
+        <p className="pt-5">Score Breakdown</p>
+        <LineScore score={82} label="Food Quality" />
+        <LineScore score={70} label="Staffing" />
+        <LineScore score={75} label="Operations" />
+        <LineScore score={68} label="Cost Control" />
+        <LineScore score={65} label="Marketing" />
+        <LineScore score={80} label="Customer Experience" />
+        <LineScore score={72} label="Technology" />
+      </div>
+      <div className="col-span-2 max-[1350px]:col-span-1">
+        <div className="border border-[#EEDFDB] rounded-2xl p-4">
+          <p className="text-md font-medium font-effra">Quick Actions</p>
+          <div className="grid min-[370px]:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+            <GlobalButton title={"Submit Request"} className="flex-row-reverse" borderRadius="8px" height="40px" icon={<FileText size={20} />} bgColor="#1E50C1" color="white" />
+            <GlobalButton title={"Order Supplies"} className="flex-row-reverse" borderRadius="8px" height="40px" borderColor="#EEDFDB" borderWidth="1px" icon={<Package size={20} />} />
+            <GlobalButton title={"Message Team"} className="flex-row-reverse" borderRadius="8px" height="40px" borderColor="#EEDFDB" borderWidth="1px" icon={<MessageSquare size={20} />} />
+            <GlobalButton title={"Emergency"} className="flex-row-reverse" borderRadius="8px" height="40px" icon={<FileText size={20} />} bgColor="#D4183D" color="white" />
           </div>
-          <p className="mt-6 text-sm text-[#71717a] font-effra">
-            Activity will appear here when your backend or integrations are connected.
-          </p>
         </div>
+        <p className="text-xl font-medium font-effra py-3">Key Metrics</p>
+        <div className="grid grid-cols-1 min-[390px]:grid-cols-2 md:grid-cols-3 gap-5">
+          {keyMetricsData.map((metric) => (
+            <KeyMatricsCard
+              key={metric.title}
+              title={metric.title}
+              value={metric.value}
+              icon={<metric.icon className={metric.iconClassName} size={metric.iconSize ?? 24} />}
+              footerText={metric.footerText}
+              footerTone={metric.footerTone}
+            />
+          ))}
+        </div>
+        <WhatsHappeningNow />
       </div>
     </div>
   );
-}
+};
+
+export default DashboardPage;
