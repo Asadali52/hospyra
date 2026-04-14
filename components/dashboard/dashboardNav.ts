@@ -25,7 +25,7 @@ export type DashboardNavItem = {
 export const DASHBOARD_NAV: DashboardNavItem[] = [
   { href: '/dashboard', label: 'Overview', icon: LayoutGrid },
   { href: '/dashboard/performance', label: 'Performance', icon: TrendingUp },
-  { href: '/dashboard/menu', label: 'Menu', icon: Utensils },
+  { href: '/dashboard/menu', label: 'Menu Management', icon: Utensils },
   { href: '/dashboard/inventory', label: 'Inventory', icon: Package },
   { href: '/dashboard/staffing', label: 'Staffing', icon: Users },
   { href: '/dashboard/orders', label: 'Orders', icon: ShoppingCart },
