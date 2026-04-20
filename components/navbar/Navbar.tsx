@@ -146,9 +146,7 @@ const Navbar = () => {
                 {link.name}
               </NavLink>
             ))}
-          </div>
 
-          <div className="max-[1200px]:hidden">
             <GlobalButton
               title="Join Hosperra"
               font="500"

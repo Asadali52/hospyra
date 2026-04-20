@@ -25,7 +25,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       className={cn(
         'fixed inset-y-0 left-0 flex h-screen w-70 lg:w-56 shrink-0 flex-col bg-black text-white',
         'max-lg:z-100 max-lg:shadow-xl',
-        'max-lg:transition-transform max-lg:duration-200',
+        'max-lg:transition-transform max-lg:duration-400',
         mobileOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'
       )}
     >

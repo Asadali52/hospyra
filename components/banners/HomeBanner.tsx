@@ -1,9 +1,13 @@
+'use client';
+
 import Image from 'next/image';
 import { ArrowRight, Play } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import GlobalButton from '../buttons/GlobalButton';
 import RightImg from "@/public/assets/pngs/banner-images/home-banner-img.png";
 
 const HomeBanner = () => {
+  const router = useRouter();
   return (
     <div className='grid grid-cols-2 max-[1000px]:grid-cols-1 py-16 max-[1000px]:py-10 px-[4%] max-[1200px]:gap-6 bg-linear-to-b from-[#F8F7F7] to-[#FFF7F5]'>
       <div className='my-auto space-y-3 max-[1000px]:order-1'>
@@ -13,7 +17,7 @@ const HomeBanner = () => {
         <p className='text-[#FF3500] text-lg'>Pay $0 Signup Fee (Limited Time — $499 Value)</p>
         <div className='flex max-[550px]:flex-col gap-4 mt-4 sm:mt-8'>
           <GlobalButton title='Join Now' className='px-6' borderRadius='8px' height='45px' bgColor='#1E50C1' color='white' />
-          <div className='underline flex cursor-pointer font-medium items-center max-[550px]:justify-center gap-2'>
+          <div onClick={() => router.push('/dashboard')} className='underline flex cursor-pointer font-medium items-center max-[550px]:justify-center gap-2'>
             Book a Demo <ArrowRight size={20} />
           </div>
         </div>
